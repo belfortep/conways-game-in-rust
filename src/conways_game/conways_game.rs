@@ -14,7 +14,6 @@ impl ConwaysGame {
     }
 
     pub fn next_generation(&mut self) {
-
         let alive_cells = self.alive_cells();
 
         let resurrected_cells = self.resurrected_cells();
