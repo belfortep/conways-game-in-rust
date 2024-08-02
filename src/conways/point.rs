@@ -15,19 +15,17 @@ impl Point {
     }
 
     pub fn neighbours(&self) -> HashSet<Point> {
-
         let mut neighbours = HashSet::new();
 
         neighbours.insert(Point::new(self.x_position + 1, self.y_position));
-        neighbours.insert(Point::new(self.x_position -1, self.y_position));
+        neighbours.insert(Point::new(self.x_position - 1, self.y_position));
         neighbours.insert(Point::new(self.x_position, self.y_position + 1));
         neighbours.insert(Point::new(self.x_position, self.y_position - 1));
         neighbours.insert(Point::new(self.x_position + 1, self.y_position + 1));
-        neighbours.insert(Point::new(self.x_position +1, self.y_position -1));
-        neighbours.insert(Point::new(self.x_position -1, self.y_position +1));
-        neighbours.insert(Point::new(self.x_position -1, self.y_position - 1));
+        neighbours.insert(Point::new(self.x_position + 1, self.y_position - 1));
+        neighbours.insert(Point::new(self.x_position - 1, self.y_position + 1));
+        neighbours.insert(Point::new(self.x_position - 1, self.y_position - 1));
 
         neighbours
     }
-
 }
