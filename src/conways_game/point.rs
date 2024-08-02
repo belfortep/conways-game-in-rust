@@ -1,7 +1,9 @@
+use std::collections::HashSet;
+
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Point {
-    pub x_position: i32,
-    pub y_position: i32,
+    x_position: i32,
+    y_position: i32,
 }
 
 impl Point {
@@ -11,4 +13,21 @@ impl Point {
             y_position,
         }
     }
+
+    pub fn neighbours(&self) -> HashSet<Point> {
+
+        let mut neighbours = HashSet::new();
+
+        neighbours.insert(Point::new(self.x_position + 1, self.y_position));
+        neighbours.insert(Point::new(self.x_position -1, self.y_position));
+        neighbours.insert(Point::new(self.x_position, self.y_position + 1));
+        neighbours.insert(Point::new(self.x_position, self.y_position - 1));
+        neighbours.insert(Point::new(self.x_position + 1, self.y_position + 1));
+        neighbours.insert(Point::new(self.x_position +1, self.y_position -1));
+        neighbours.insert(Point::new(self.x_position -1, self.y_position +1));
+        neighbours.insert(Point::new(self.x_position -1, self.y_position + 1));
+
+        neighbours
+    }
+
 }
