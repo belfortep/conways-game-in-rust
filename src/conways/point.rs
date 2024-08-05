@@ -30,27 +30,59 @@ impl Point {
     }
 }
 
-impl From<&str> for Point {
-    fn from(s: &str) -> Self {
+impl TryFrom<&str> for Point {
+    type Error = String;
+    fn try_from(s: &str) -> Result<Self, String> {
+
+
         let mut positions = s.split(',');
 
         let (Some(x_position), Some(y_position), None) =
             (positions.next(), positions.next(), positions.next())
         else {
-            return Self::default();
+            return Err("Bad format creating a Point, should be x_position,y_position".into());
         };
 
         let Ok(x_position) = x_position.parse() else {
-            return Self::default();
+            return Err("The x_position should be an integer".into());
         };
 
         let Ok(y_position) = y_position.parse() else {
-            return Self::default();
+            return Err("The y_position should be an integer".into());
         };
 
-        Self {
+        Ok(Self {
             x_position,
             y_position,
-        }
+        })
     }
+}
+
+#[cfg(test)]
+mod test {
+
+    use super::*;
+
+    #[test]
+    fn test_001_can_create_a_point_from_string() {
+        let point = Point::try_from("5,5").unwrap();
+
+        assert_eq!(point.x_position, 5);
+        assert_eq!(point.y_position, 5);
+    }
+
+    #[test]
+    fn test_002_can_not_create_point_from_missing_position() {
+        let point = Point::try_from("5");
+
+        assert!(point.is_err())
+    }
+
+    #[test]
+    fn test_003_can_not_create_point_from_wrong_type() {
+        let point = Point::try_from("hi,5");
+
+        assert!(point.is_err())
+    }
+
 }

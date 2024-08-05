@@ -11,7 +11,7 @@ pub fn parse_arguments(args: Vec<String>) -> Result<Vec<Point>, String> {
     let args = args[0].split(":");
 
     for point in args {
-        points.push(Point::from(point));
+        points.push(Point::try_from(point)?);
     }
 
     Ok(points)
