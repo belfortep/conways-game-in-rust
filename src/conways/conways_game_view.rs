@@ -67,6 +67,11 @@ impl ConwaysGameView {
         if is_key_down(KeyCode::Enter) {
             self.next_generation();
         }
+        if is_key_down(KeyCode::Escape) {
+            println!("Closing the app...");
+            std::process::exit(0);
+        }
+        
     }
 
     fn get_x_position(position: i32, scale_factor: i32) -> f32 {
