@@ -37,6 +37,12 @@ impl ConwaysGame {
         }
     }
 
+    pub fn add_cells(&mut self, cells_to_add: Vec<Point>) {
+        let cells_to_add = HashSet::from_iter(cells_to_add);
+
+        self.alive_cells = self.alive_cells.union(&cells_to_add).cloned().collect();
+    }
+
     fn resurrected_cells(&self) -> HashSet<Point> {
         let mut cells = HashSet::new();
 
@@ -139,6 +145,37 @@ mod test {
         let cells = vec![Point::new(0, 1), Point::new(-1, 0), Point::new(1, 0)];
         let mut conways_game = ConwaysGame::new(cells);
 
+        conways_game.next_generation();
+
+        assert!(conways_game.is_alive(Point::new(0, 0)));
+    }
+
+    #[test]
+    fn test_006_can_add_one_cell_after_a_generation_passed() {
+        let cells = vec![Point::new(0, 0)];
+        let mut conways_game = ConwaysGame::new(cells);
+
+        conways_game.next_generation();
+
+        assert!(!conways_game.is_alive(Point::new(0, 0)));
+
+        let cells = vec![Point::new(0, 0)];
+        conways_game.add_cells(cells);
+
+        assert!(conways_game.is_alive(Point::new(0, 0)));
+    }
+
+    #[test]
+    fn test_007_can_add_multiple_cells_after_a_generation_passed() {
+        let cells = vec![Point::new(0, 0)];
+        let mut conways_game = ConwaysGame::new(cells);
+
+        conways_game.next_generation();
+
+        assert!(!conways_game.is_alive(Point::new(0, 0)));
+
+        let cells = vec![Point::new(0, 0), Point::new(0, 1), Point::new(0, -1)];
+        conways_game.add_cells(cells);
         conways_game.next_generation();
 
         assert!(conways_game.is_alive(Point::new(0, 0)));
