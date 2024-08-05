@@ -1,9 +1,7 @@
 use std::{thread::sleep, time::Duration};
 
 use macroquad::{
-    color::{BLACK, WHITE},
-    shapes::draw_rectangle,
-    window::{clear_background, next_frame, screen_height, screen_width},
+    color::{BLACK, WHITE}, shapes::draw_rectangle, time::get_time, window::{clear_background, next_frame, screen_height, screen_width}
 };
 
 use super::{
@@ -25,8 +23,15 @@ impl ConwaysGameView {
     }
 
     pub async fn start_drawing(&mut self) {
+
+        let last_frame_time = get_time();
+
         while self.is_drawing {
-            clear_background(WHITE);
+
+            let current_frame_time = get_time();
+
+            if current_frame_time - last_frame_time >= CONSTANT_WAIT {
+                clear_background(WHITE);
 
             self.conways_game.next_generation();
 
@@ -38,9 +43,8 @@ impl ConwaysGameView {
                 let y_position = Self::get_y_position(cell.y_position, scale_factor);
                 draw_rectangle(x_position, y_position, width, height, BLACK);
             });
-
-            sleep(Duration::from_secs_f32(CONSTANT_WAIT));
-
+            }
+            
             next_frame().await;
         }
     }
