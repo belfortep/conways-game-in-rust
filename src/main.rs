@@ -29,7 +29,7 @@ async fn main() -> Result<(), String> {
     }
 
     let mut cells = Vec::new();
-    
+
     if let Some(points) = args.get_one::<String>("p") {
         cells = parse_points_arguments(points.clone())?;
     }
