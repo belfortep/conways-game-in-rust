@@ -3,13 +3,13 @@ use std::collections::HashSet;
 use super::point::Point;
 
 pub struct ConwaysGame {
-    cells: HashSet<Point>,
+    alive_cells: HashSet<Point>,
 }
 
 impl ConwaysGame {
-    pub fn new(cells: Vec<Point>) -> Self {
+    pub fn new(alive_cells: Vec<Point>) -> Self {
         Self {
-            cells: HashSet::from_iter(cells),
+            alive_cells: HashSet::from_iter(alive_cells),
         }
     }
 
@@ -24,15 +24,15 @@ impl ConwaysGame {
             cells.insert(*cell);
         }
 
-        self.cells = cells;
+        self.alive_cells = cells;
     }
 
     pub fn is_alive(&self, cell: Point) -> bool {
-        self.cells.contains(&cell)
+        self.alive_cells.contains(&cell)
     }
 
     pub fn cells_do<F: FnMut(&Point)>(&self, mut closure: F) {
-        for cell in &self.cells {
+        for cell in &self.alive_cells {
             closure(cell);
         }
     }
@@ -64,13 +64,13 @@ impl ConwaysGame {
     }
 
     fn can_resurrect(&self, cell: &Point) -> bool {
-        let ammount_of_neighbours = cell.neighbours().intersection(&self.cells).count();
+        let ammount_of_neighbours = cell.neighbours().intersection(&self.alive_cells).count();
 
         ammount_of_neighbours == 3
     }
 
     fn can_survive(&self, cell: &Point) -> bool {
-        let ammount_of_neighbours = cell.neighbours().intersection(&self.cells).count();
+        let ammount_of_neighbours = cell.neighbours().intersection(&self.alive_cells).count();
 
         ammount_of_neighbours == 2 || ammount_of_neighbours == 3
     }
