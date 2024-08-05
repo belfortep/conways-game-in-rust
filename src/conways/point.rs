@@ -2,8 +2,8 @@ use std::collections::HashSet;
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy)]
 pub struct Point {
-    x_position: i32,
-    y_position: i32,
+    pub x_position: i32,
+    pub y_position: i32,
 }
 
 impl Point {
