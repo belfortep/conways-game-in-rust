@@ -3,13 +3,13 @@ use std::collections::HashSet;
 use super::point::Point;
 
 pub struct ConwaysGame {
-    cells: HashSet<Point>,
+    alive_cells: HashSet<Point>,
 }
 
 impl ConwaysGame {
-    pub fn new(cells: Vec<Point>) -> Self {
+    pub fn new(alive_cells: Vec<Point>) -> Self {
         Self {
-            cells: HashSet::from_iter(cells),
+            alive_cells: HashSet::from_iter(alive_cells),
         }
     }
 
@@ -24,17 +24,17 @@ impl ConwaysGame {
             cells.insert(*cell);
         }
 
-        self.cells = cells;
+        self.alive_cells = cells;
     }
 
     pub fn is_alive(&self, cell: Point) -> bool {
-        self.cells.contains(&cell)
+        self.alive_cells.contains(&cell)
     }
 
     fn resurrected_cells(&self) -> HashSet<Point> {
         let mut cells = HashSet::new();
 
-        for cell in &self.cells {
+        for cell in &self.alive_cells {
             for neigbour in cell.neighbours() {
                 if self.can_resurrect(&neigbour) {
                     cells.insert(neigbour);
@@ -48,7 +48,7 @@ impl ConwaysGame {
     fn alive_cells(&self) -> HashSet<Point> {
         let mut cells = HashSet::new();
 
-        for cell in &self.cells {
+        for cell in &self.alive_cells {
             if self.can_survive(cell) {
                 cells.insert(*cell);
             }
@@ -57,13 +57,13 @@ impl ConwaysGame {
     }
 
     fn can_resurrect(&self, cell: &Point) -> bool {
-        let ammount_of_neighbours = cell.neighbours().intersection(&self.cells).count();
+        let ammount_of_neighbours = cell.neighbours().intersection(&self.alive_cells).count();
 
         ammount_of_neighbours == 3
     }
 
     fn can_survive(&self, cell: &Point) -> bool {
-        let ammount_of_neighbours = cell.neighbours().intersection(&self.cells).count();
+        let ammount_of_neighbours = cell.neighbours().intersection(&self.alive_cells).count();
 
         ammount_of_neighbours == 2 || ammount_of_neighbours == 3
     }
