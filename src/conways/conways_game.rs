@@ -40,7 +40,7 @@ impl ConwaysGame {
     fn resurrected_cells(&self) -> HashSet<Point> {
         let mut cells = HashSet::new();
 
-        self.cells_do(| cell | {
+        self.cells_do(|cell| {
             for neigbour in cell.neighbours() {
                 if self.can_resurrect(&neigbour) {
                     cells.insert(neigbour);
