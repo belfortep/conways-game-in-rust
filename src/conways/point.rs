@@ -29,3 +29,36 @@ impl Point {
         neighbours
     }
 }
+
+impl Default for Point {
+    fn default() -> Self {
+        Self {
+            x_position: 0,
+            y_position: 0
+        }
+    }
+}
+
+impl From<&str> for Point {
+    fn from(s: &str) -> Self {
+        let mut positions = s.split(',');
+
+        let (Some(x_position), Some(y_position), None) = (positions.next(), positions.next(), positions.next()) else {
+            return Self::default();
+        };
+        
+        let Ok(x_position) = x_position.parse() else {
+            return Self::default();
+        };
+
+        let Ok(y_position) = y_position.parse() else {
+            return Self::default();
+        };
+
+        Self {
+            x_position,
+            y_position,
+        }
+    }
+}
+
