@@ -1,10 +1,7 @@
 use std::{thread::sleep, time::Duration};
 
-use macroquad::{
-    color::{BLACK, WHITE},
-    shapes::draw_rectangle,
-    window::{clear_background, next_frame, screen_height, screen_width},
-};
+use macroquad::prelude::*;
+
 
 use super::{
     conways_game::ConwaysGame,
@@ -13,35 +10,55 @@ use super::{
 
 pub struct ConwaysGameView {
     conways_game: ConwaysGame,
-    is_drawing: bool,
+    is_passing_generations: bool,
 }
 
 impl ConwaysGameView {
     pub fn new(conways_game: ConwaysGame) -> Self {
         Self {
             conways_game,
-            is_drawing: true,
+            is_passing_generations: true,
         }
     }
 
     pub async fn start_drawing(&mut self) {
-        while self.is_drawing {
+        loop {
+
+
+            self.verify_input();
+
             clear_background(WHITE);
 
-            self.conways_game.next_generation();
+            if self.is_passing_generations {
+                self.conways_game.next_generation();
+            }
 
-            self.conways_game.cells_do(|cell| {
-                let width = CELLS_WIDTH;
-                let height = CELLS_HEIGHT;
-                let scale_factor = VIEW_SCALE_FACTOR;
-                let x_position = Self::get_x_position(cell.x_position, scale_factor);
-                let y_position = Self::get_y_position(cell.y_position, scale_factor);
-                draw_rectangle(x_position, y_position, width, height, BLACK);
-            });
+            self.draw_cells();
 
             sleep(Duration::from_secs_f32(CONSTANT_WAIT));
 
             next_frame().await;
+        }
+    }
+
+    fn draw_cells(&mut self) {
+        self.conways_game.cells_do(|cell| {
+            let width = CELLS_WIDTH;
+            let height = CELLS_HEIGHT;
+            let scale_factor = VIEW_SCALE_FACTOR;
+            let x_position = Self::get_x_position(cell.x_position, scale_factor);
+            let y_position = Self::get_y_position(cell.y_position, scale_factor);
+            draw_rectangle(x_position, y_position, width, height, BLACK);
+        });
+    }   
+
+
+    fn verify_input(&mut self) {
+        if is_key_down(KeyCode::P) {
+            self.is_passing_generations = !self.is_passing_generations;
+        }
+        if is_key_down(KeyCode::Enter) {
+            self.conways_game.next_generation();
         }
     }
 
