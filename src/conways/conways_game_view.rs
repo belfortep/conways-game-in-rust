@@ -1,4 +1,4 @@
-use std::{thread::sleep, time::Duration};
+
 
 use macroquad::{
     color::{BLACK, WHITE}, shapes::draw_rectangle, time::get_time, window::{clear_background, next_frame, screen_height, screen_width}
