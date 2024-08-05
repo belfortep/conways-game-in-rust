@@ -13,6 +13,7 @@ use crate::parse_random_arguments;
 use super::{
     conways_game::ConwaysGame,
     conways_game_constants::{CELLS_HEIGHT, CELLS_WIDTH, CONSTANT_WAIT, VIEW_SCALE_FACTOR},
+    point::Point,
 };
 
 pub struct ConwaysGameView {
@@ -35,6 +36,7 @@ impl ConwaysGameView {
     pub async fn start_drawing(&mut self) {
         loop {
             self.verify_input();
+            self.verify_mouse_touch();
 
             clear_background(WHITE);
 
@@ -47,7 +49,11 @@ impl ConwaysGameView {
             widgets::Window::new(hash!(), vec2(10.0, 10.), vec2(500., 60.))
                 .label("Random state")
                 .ui(&mut root_ui(), |ui| {
-                    ui.input_text(hash!(), "<- write random state", &mut self.random_state);
+                    ui.input_text(
+                        hash!(),
+                        "<- format: max,min,ammount",
+                        &mut self.random_state,
+                    );
                 });
 
             draw_text(
@@ -69,8 +75,10 @@ impl ConwaysGameView {
             let width = CELLS_WIDTH;
             let height = CELLS_HEIGHT;
             let scale_factor = VIEW_SCALE_FACTOR;
-            let x_position = Self::get_x_position(cell.x_position, scale_factor);
-            let y_position = Self::get_y_position(cell.y_position, scale_factor);
+            let x_position =
+                Self::convert_x_position_from_conways_unit_to_pixels(cell.x_position, scale_factor);
+            let y_position =
+                Self::convert_y_position_from_conways_unit_to_pixels(cell.y_position, scale_factor);
             draw_rectangle(x_position, y_position, width, height, BLACK);
         });
     }
@@ -102,11 +110,37 @@ impl ConwaysGameView {
         }
     }
 
-    fn get_x_position(position: i32, scale_factor: i32) -> f32 {
+    fn verify_mouse_touch(&mut self) {
+        let mut cells_to_add = Vec::new();
+
+        if is_mouse_button_down(MouseButton::Left) {
+            let (mouse_x, mouse_y) = mouse_position();
+
+            let scale_factor = VIEW_SCALE_FACTOR as f32;
+            let x_position =
+                Self::convert_x_position_from_pixels_to_conways_unit(mouse_x, scale_factor);
+            let y_position =
+                Self::convert_y_position_from_pixels_to_conways_unit(mouse_y, scale_factor);
+
+            cells_to_add.push(Point::new(x_position, y_position));
+        }
+
+        self.conways_game.add_cells(cells_to_add);
+    }
+
+    fn convert_x_position_from_conways_unit_to_pixels(position: i32, scale_factor: i32) -> f32 {
         screen_width() / 2.0 - (position * scale_factor) as f32
     }
 
-    fn get_y_position(position: i32, scale_factor: i32) -> f32 {
+    fn convert_y_position_from_conways_unit_to_pixels(position: i32, scale_factor: i32) -> f32 {
         screen_height() / 2.0 - (position * scale_factor) as f32
+    }
+
+    fn convert_x_position_from_pixels_to_conways_unit(position: f32, scale_factor: f32) -> i32 {
+        (-1.0 * (position - screen_width() / 2.0) / scale_factor).round() as i32
+    }
+
+    fn convert_y_position_from_pixels_to_conways_unit(position: f32, scale_factor: f32) -> i32 {
+        (-1.0 * (position - screen_height() / 2.0) / scale_factor).round() as i32
     }
 }
