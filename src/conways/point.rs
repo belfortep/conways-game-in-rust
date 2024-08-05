@@ -1,4 +1,5 @@
-use std::collections::HashSet;
+use rand::Rng;
+use std::{collections::HashSet, ops::Range};
 
 #[derive(PartialEq, Eq, Hash, Clone, Copy, Default)]
 pub struct Point {
@@ -27,6 +28,13 @@ impl Point {
         neighbours.insert(Point::new(self.x_position - 1, self.y_position - 1));
 
         neighbours
+    }
+
+    pub fn generate_random_point(range: Range<i32>) -> Point {
+        let x_position = rand::thread_rng().gen_range(range.clone());
+        let y_position = rand::thread_rng().gen_range(range);
+
+        Point::new(x_position, y_position)
     }
 }
 
