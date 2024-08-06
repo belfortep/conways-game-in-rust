@@ -60,6 +60,9 @@ impl ConwaysGameView {
             20.0,
             BLACK,
         );
+
+        draw_text("P to un/pause, Enter to pass one generation, Up key to increase speed, Down key to decrease speed, Escape to exit", 10.0, 50.0, 15.0, BLACK);
+
         self.conways_game.all_cells_do(|cell| {
             let width = CELLS_WIDTH;
             let height = CELLS_HEIGHT;
