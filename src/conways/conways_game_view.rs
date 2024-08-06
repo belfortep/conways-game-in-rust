@@ -21,7 +21,7 @@ impl ConwaysGameView {
     pub fn new(conways_game: ConwaysGame) -> Self {
         Self {
             conways_game,
-            is_passing_generations: true,
+            is_passing_generations: false,
             generations_count: 0,
         }
     }

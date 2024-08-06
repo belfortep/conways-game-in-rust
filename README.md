@@ -7,6 +7,6 @@ Also, you can type ´make random RNG=max_value,min_value,amount_of_points´ to s
 
 ## Controls
 - "⬆️" to pass one generation at a time
-- "🅿️" to pause the automatic pass of generations
+- "🅿️" to pause/unpause the automatic pass of generations
 - "Escape" to exit the game
 - "Mouse button left" to place new cells
