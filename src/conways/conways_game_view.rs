@@ -100,7 +100,7 @@ impl ConwaysGameView {
     }
 
     fn convert_x_position_from_conways_unit_to_pixels(position: i32, scale_factor: i32) -> f32 {
-        screen_width() / 2.0 - (position * scale_factor) as f32
+        screen_width() / 2.0 - (-1 * position * scale_factor) as f32
     }
 
     fn convert_y_position_from_conways_unit_to_pixels(position: i32, scale_factor: i32) -> f32 {
