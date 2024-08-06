@@ -1,3 +1,4 @@
+use clap::{Arg, ArgMatches, Command};
 use conways::point::Point;
 
 pub mod conways;
@@ -15,6 +16,34 @@ pub fn parse_points_arguments(args: String) -> Result<Vec<Point>, String> {
     }
 
     Ok(points)
+}
+
+pub fn receive_command_line_arguments() -> Result<ArgMatches, String> {
+
+    let args = Command::new(" Conway's game of life")
+        .arg(
+            Arg::new("p")
+                .short('p')
+                .long("points")
+                .value_name("Points")
+                .help("Specify the points in the format 0,0:1,0:1,1:...."),
+        )
+        .arg(
+            Arg::new("r")
+                .short('r')
+                .long("Random")
+                .value_name("Random")
+                .help("Specify the range in the format max_value,min_value,ammout_of_points"),
+        )
+        .after_help("Don't use -r and -p at the same time")
+        .get_matches();
+
+    if args.contains_id("p") && args.contains_id("r") {
+        return Err("Don't use -r and -p at the same time".into());
+    }
+
+    Ok(args)
+
 }
 
 pub fn parse_random_arguments(args: String) -> Result<Vec<Point>, String> {
