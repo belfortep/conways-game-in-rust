@@ -1,5 +1,9 @@
 use conways::{
-    conways::{conways_game::ConwaysGame, conways_game_view::ConwaysGameView},
+    conways::{
+        conways_game::ConwaysGame,
+        conways_game_constants::{HEIGHT, WIDTH},
+        conways_game_view::ConwaysGameView,
+    },
     parser::parser::{
         parse_points_arguments, parse_random_arguments, receive_command_line_arguments,
     },
@@ -19,7 +23,7 @@ async fn main() -> Result<(), String> {
         cells = parse_random_arguments(random.clone())?;
     }
 
-    let conways_game = ConwaysGame::new(cells, 50, 50)?;
+    let conways_game = ConwaysGame::new(cells, HEIGHT, WIDTH)?;
     let mut conways_game_view = ConwaysGameView::new(conways_game);
 
     conways_game_view.start_drawing().await;

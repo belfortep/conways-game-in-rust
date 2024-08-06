@@ -12,7 +12,10 @@ impl ConwaysGame {
     pub fn new(alive_cells: Vec<Point>, height: u32, width: u32) -> Result<Self, String> {
         for cell in &alive_cells {
             if !Self::cell_is_in_range(cell, height, width) {
-                return Err("A cell was not in the specified range".into());
+                return Err(format!(
+                    "A cell was not in the specified range, width: {}, height: {}",
+                    width, height
+                ));
             }
         }
 
