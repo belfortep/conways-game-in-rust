@@ -19,7 +19,7 @@ async fn main() -> Result<(), String> {
         cells = parse_random_arguments(random.clone())?;
     }
 
-    let conways_game = ConwaysGame::new(cells, 20, 20)?;
+    let conways_game = ConwaysGame::new(cells, 50, 50)?;
     let mut conways_game_view = ConwaysGameView::new(conways_game);
 
     conways_game_view.start_drawing().await;

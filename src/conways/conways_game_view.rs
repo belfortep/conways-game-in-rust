@@ -7,7 +7,7 @@ use macroquad::{
 
 use super::{
     conways_game::ConwaysGame,
-    conways_game_constants::{CELLS_HEIGHT, CELLS_WIDTH, VIEW_SCALE_FACTOR},
+    conways_game_constants::{CELLS_HEIGHT, CELLS_WIDTH, PADDING_X, PADDING_Y, VIEW_SCALE_FACTOR},
     point::Point,
 };
 
@@ -49,7 +49,6 @@ impl ConwaysGameView {
             20.0,
             BLACK,
         );
-
         self.conways_game.all_cells_do(|cell| {
             let width = CELLS_WIDTH;
             let height = CELLS_HEIGHT;
@@ -57,15 +56,15 @@ impl ConwaysGameView {
             let x_position = Self::convert_x_position_from_conways_unit_to_pixels(
                 cell.x_position as i32,
                 scale_factor,
-            );
+            ) + PADDING_X;
             let y_position = Self::convert_y_position_from_conways_unit_to_pixels(
                 cell.y_position as i32,
                 scale_factor,
-            );
+            ) - PADDING_Y;
             if self.conways_game.is_alive(*cell) {
                 draw_rectangle(x_position, y_position, width, height, BLACK);
             } else {
-                draw_rectangle_lines(x_position, y_position, width, height, 1.0, GRAY);
+                draw_rectangle_lines(x_position, y_position, width, height, 2.0, GRAY);
             }
         });
     }
@@ -112,14 +111,14 @@ impl ConwaysGameView {
     }
 
     fn convert_y_position_from_conways_unit_to_pixels(position: i32, scale_factor: i32) -> f32 {
-        (-1 * position * scale_factor) as f32
+        -1.0 * ((position * scale_factor) as f32 - screen_height())
     }
 
     fn convert_x_position_from_pixels_to_conways_unit(position: f32, scale_factor: f32) -> i32 {
-        ((position) / scale_factor).round() as i32
+        ((position - PADDING_X) / scale_factor).round() as i32
     }
 
     fn convert_y_position_from_pixels_to_conways_unit(position: f32, scale_factor: f32) -> i32 {
-        (-1.0 * (position) / scale_factor).round() as i32
+        ((screen_height() - position - PADDING_Y) / scale_factor).round() as i32
     }
 }
