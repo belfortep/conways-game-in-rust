@@ -19,7 +19,6 @@ pub fn parse_points_arguments(args: String) -> Result<Vec<Point>, String> {
 }
 
 pub fn receive_command_line_arguments() -> Result<ArgMatches, String> {
-
     let args = Command::new(" Conway's game of life")
         .arg(
             Arg::new("p")
@@ -43,7 +42,6 @@ pub fn receive_command_line_arguments() -> Result<ArgMatches, String> {
     }
 
     Ok(args)
-
 }
 
 pub fn parse_random_arguments(args: String) -> Result<Vec<Point>, String> {

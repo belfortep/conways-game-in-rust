@@ -2,19 +2,12 @@ use macroquad::{
     color::{BLACK, WHITE},
     prelude::*,
     shapes::draw_rectangle,
-    time::get_time,
-    ui::{
-        hash, root_ui,
-        widgets::{self},
-    },
     window::{clear_background, next_frame, screen_height, screen_width},
 };
 
-use crate::parse_random_arguments;
-
 use super::{
     conways_game::ConwaysGame,
-    conways_game_constants::{CELLS_HEIGHT, CELLS_WIDTH, FRAME_RATE, VIEW_SCALE_FACTOR},
+    conways_game_constants::{CELLS_HEIGHT, CELLS_WIDTH, VIEW_SCALE_FACTOR},
     point::Point,
 };
 
@@ -22,7 +15,6 @@ pub struct ConwaysGameView {
     conways_game: ConwaysGame,
     is_passing_generations: bool,
     generations_count: u32,
-    random_state: String,
 }
 
 impl ConwaysGameView {
@@ -31,51 +23,33 @@ impl ConwaysGameView {
             conways_game,
             is_passing_generations: true,
             generations_count: 0,
-            random_state: String::new(),
         }
     }
 
     pub async fn start_drawing(&mut self) {
-        let last_frame_time = get_time();
-
         loop {
-            let current_frame_time = get_time();
-            if current_frame_time - last_frame_time >= FRAME_RATE {
-                self.verify_input();
-                self.verify_mouse_touch();
+            self.verify_input();
+            self.verify_mouse_touch();
 
-                clear_background(WHITE);
-
-                if self.is_passing_generations {
-                    self.next_generation();
-                }
-
-                self.draw_cells();
-
-                widgets::Window::new(hash!(), vec2(10.0, 10.), vec2(500., 60.))
-                    .label("Random state")
-                    .ui(&mut root_ui(), |ui| {
-                        ui.input_text(
-                            hash!(),
-                            "<- format: max,min,ammount",
-                            &mut self.random_state,
-                        );
-                    });
-
-                draw_text(
-                    format!("Generation number {}", self.generations_count).as_str(),
-                    520.0,
-                    30.0,
-                    20.0,
-                    BLACK,
-                );
+            if self.is_passing_generations {
+                self.next_generation();
             }
+            self.draw();
 
             next_frame().await;
         }
     }
 
-    fn draw_cells(&mut self) {
+    fn draw(&mut self) {
+        clear_background(WHITE);
+        draw_text(
+            format!("Generation number {}", self.generations_count).as_str(),
+            10.0,
+            30.0,
+            20.0,
+            BLACK,
+        );
+
         self.conways_game.cells_do(|cell| {
             let width = CELLS_WIDTH;
             let height = CELLS_HEIGHT;
@@ -115,21 +89,13 @@ impl ConwaysGameView {
         if is_key_released(KeyCode::P) {
             self.is_passing_generations = !self.is_passing_generations;
         }
-        if is_key_down(KeyCode::Up) {
+        if is_key_released(KeyCode::Up) {
             self.next_generation();
         }
 
         if is_key_released(KeyCode::Escape) {
             println!("Closing the app..");
             std::process::exit(0);
-        }
-
-        if is_key_released(KeyCode::Enter) {
-            if let Ok(points) = parse_random_arguments(self.random_state.clone()) {
-                let conways_game = ConwaysGame::new(points);
-                self.conways_game = conways_game;
-                self.generations_count = 0;
-            }
         }
     }
 
@@ -149,6 +115,3 @@ impl ConwaysGameView {
         (-1.0 * (position - screen_height() / 2.0) / scale_factor).round() as i32
     }
 }
-
-
-
