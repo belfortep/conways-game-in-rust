@@ -33,8 +33,6 @@ impl Point {
 impl TryFrom<&str> for Point {
     type Error = String;
     fn try_from(s: &str) -> Result<Self, String> {
-
-
         let mut positions = s.split(',');
 
         let (Some(x_position), Some(y_position), None) =
@@ -84,5 +82,4 @@ mod test {
 
         assert!(point.is_err())
     }
-
 }
