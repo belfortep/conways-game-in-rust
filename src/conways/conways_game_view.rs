@@ -93,6 +93,24 @@ impl ConwaysGameView {
         self.generations_count += 1;
     }
 
+    fn verify_mouse_touch(&mut self) {
+        let mut cells_to_add = Vec::new();
+
+        if is_mouse_button_down(MouseButton::Left) {
+            let (mouse_x, mouse_y) = mouse_position();
+
+            let scale_factor = VIEW_SCALE_FACTOR as f32;
+            let x_position =
+                Self::convert_x_position_from_pixels_to_conways_unit(mouse_x, scale_factor);
+            let y_position =
+                Self::convert_y_position_from_pixels_to_conways_unit(mouse_y, scale_factor);
+
+            cells_to_add.push(Point::new(x_position, y_position));
+        }
+
+        self.conways_game.add_cells(cells_to_add);
+    }
+
     fn verify_input(&mut self) {
         if is_key_released(KeyCode::P) {
             self.is_passing_generations = !self.is_passing_generations;
@@ -115,24 +133,6 @@ impl ConwaysGameView {
         }
     }
 
-    fn verify_mouse_touch(&mut self) {
-        let mut cells_to_add = Vec::new();
-
-        if is_mouse_button_down(MouseButton::Left) {
-            let (mouse_x, mouse_y) = mouse_position();
-
-            let scale_factor = VIEW_SCALE_FACTOR as f32;
-            let x_position =
-                Self::convert_x_position_from_pixels_to_conways_unit(mouse_x, scale_factor);
-            let y_position =
-                Self::convert_y_position_from_pixels_to_conways_unit(mouse_y, scale_factor);
-
-            cells_to_add.push(Point::new(x_position, y_position));
-        }
-
-        self.conways_game.add_cells(cells_to_add);
-    }
-
     fn convert_x_position_from_conways_unit_to_pixels(position: i32, scale_factor: i32) -> f32 {
         screen_width() / 2.0 - (position * scale_factor) as f32
     }
@@ -149,3 +149,6 @@ impl ConwaysGameView {
         (-1.0 * (position - screen_height() / 2.0) / scale_factor).round() as i32
     }
 }
+
+
+
