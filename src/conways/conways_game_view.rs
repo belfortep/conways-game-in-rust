@@ -1,18 +1,20 @@
-use std::{thread::sleep, time::Duration};
-
 use macroquad::{
+    color::{BLACK, WHITE},
     prelude::*,
+    shapes::draw_rectangle,
+    time::get_time,
     ui::{
         hash, root_ui,
         widgets::{self},
     },
+    window::{clear_background, next_frame, screen_height, screen_width},
 };
 
 use crate::parse_random_arguments;
 
 use super::{
     conways_game::ConwaysGame,
-    conways_game_constants::{CELLS_HEIGHT, CELLS_WIDTH, CONSTANT_WAIT, VIEW_SCALE_FACTOR},
+    conways_game_constants::{CELLS_HEIGHT, CELLS_WIDTH, FRAME_RATE, VIEW_SCALE_FACTOR},
     point::Point,
 };
 
@@ -34,37 +36,40 @@ impl ConwaysGameView {
     }
 
     pub async fn start_drawing(&mut self) {
+        let last_frame_time = get_time();
+
         loop {
-            self.verify_input();
-            self.verify_mouse_touch();
+            let current_frame_time = get_time();
+            if current_frame_time - last_frame_time >= FRAME_RATE {
+                self.verify_input();
+                self.verify_mouse_touch();
 
-            clear_background(WHITE);
+                clear_background(WHITE);
 
-            if self.is_passing_generations {
-                self.next_generation();
+                if self.is_passing_generations {
+                    self.next_generation();
+                }
+
+                self.draw_cells();
+
+                widgets::Window::new(hash!(), vec2(10.0, 10.), vec2(500., 60.))
+                    .label("Random state")
+                    .ui(&mut root_ui(), |ui| {
+                        ui.input_text(
+                            hash!(),
+                            "<- format: max,min,ammount",
+                            &mut self.random_state,
+                        );
+                    });
+
+                draw_text(
+                    format!("Generation number {}", self.generations_count).as_str(),
+                    520.0,
+                    30.0,
+                    20.0,
+                    BLACK,
+                );
             }
-
-            self.draw_cells();
-
-            widgets::Window::new(hash!(), vec2(10.0, 10.), vec2(500., 60.))
-                .label("Random state")
-                .ui(&mut root_ui(), |ui| {
-                    ui.input_text(
-                        hash!(),
-                        "<- format: max,min,ammount",
-                        &mut self.random_state,
-                    );
-                });
-
-            draw_text(
-                format!("Generation number {}", self.generations_count).as_str(),
-                520.0,
-                30.0,
-                20.0,
-                BLACK,
-            );
-
-            sleep(Duration::from_secs_f32(CONSTANT_WAIT));
 
             next_frame().await;
         }
