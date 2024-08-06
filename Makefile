@@ -1,6 +1,6 @@
 FILE = points.txt
 ARGS = $(shell cat $(FILE))
-RNG = 10,-10,1000
+RNG = 30,10,100
 
 run:
 	cargo run -- -p $(ARGS)
