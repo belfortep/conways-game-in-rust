@@ -2,7 +2,7 @@ use macroquad::{
     color::{BLACK, WHITE},
     prelude::*,
     shapes::draw_rectangle,
-    window::{clear_background, next_frame, screen_height, screen_width},
+    window::{clear_background, next_frame},
 };
 
 use super::{
@@ -50,7 +50,7 @@ impl ConwaysGameView {
             BLACK,
         );
 
-        self.conways_game.cells_do(|cell| {
+        self.conways_game.all_cells_do(|cell| {
             let width = CELLS_WIDTH;
             let height = CELLS_HEIGHT;
             let scale_factor = VIEW_SCALE_FACTOR;
@@ -62,7 +62,11 @@ impl ConwaysGameView {
                 cell.y_position as i32,
                 scale_factor,
             );
-            draw_rectangle(x_position, y_position, width, height, BLACK);
+            if self.conways_game.is_alive(*cell) {
+                draw_rectangle(x_position, y_position, width, height, BLACK);
+            } else {
+                draw_rectangle_lines(x_position, y_position, width, height, 1.0, GRAY);
+            }
         });
     }
 
@@ -104,18 +108,18 @@ impl ConwaysGameView {
     }
 
     fn convert_x_position_from_conways_unit_to_pixels(position: i32, scale_factor: i32) -> f32 {
-        screen_width() / 2.0 - (-1 * position * scale_factor) as f32
+        (position * scale_factor) as f32
     }
 
     fn convert_y_position_from_conways_unit_to_pixels(position: i32, scale_factor: i32) -> f32 {
-        screen_height() / 2.0 - (position * scale_factor) as f32
+        (-1 * position * scale_factor) as f32
     }
 
     fn convert_x_position_from_pixels_to_conways_unit(position: f32, scale_factor: f32) -> i32 {
-        (-1.0 * (position - screen_width() / 2.0) / scale_factor).round() as i32
+        ((position) / scale_factor).round() as i32
     }
 
     fn convert_y_position_from_pixels_to_conways_unit(position: f32, scale_factor: f32) -> i32 {
-        (-1.0 * (position - screen_height() / 2.0) / scale_factor).round() as i32
+        (-1.0 * (position) / scale_factor).round() as i32
     }
 }

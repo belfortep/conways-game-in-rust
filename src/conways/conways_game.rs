@@ -24,7 +24,7 @@ impl ConwaysGame {
     }
 
     fn cell_is_in_range(cell: &Point, height: u32, width: u32) -> bool {
-        cell.x_position < height as i32 && cell.y_position < width as i32
+        cell.x_position < width as i32 && cell.y_position < height as i32
     }
 
     pub fn next_generation(&mut self) {
@@ -35,7 +35,9 @@ impl ConwaysGame {
         let mut cells = HashSet::new();
 
         for cell in alive_cells.union(&resurrected_cells) {
-            cells.insert(*cell);
+            if Self::cell_is_in_range(cell, self.height, self.width) {
+                cells.insert(*cell);
+            }
         }
 
         self.alive_cells = cells;
@@ -45,9 +47,17 @@ impl ConwaysGame {
         self.alive_cells.contains(&cell)
     }
 
-    pub fn cells_do<F: FnMut(&Point)>(&self, mut closure: F) {
+    fn cells_do<F: FnMut(&Point)>(&self, mut closure: F) {
         for cell in &self.alive_cells {
             closure(cell);
+        }
+    }
+
+    pub fn all_cells_do<F: FnMut(&Point)>(&self, mut closure: F) {
+        for x in 0..self.width {
+            for y in 0..self.height {
+                closure(&Point::new(x as i32, y as i32));
+            }
         }
     }
 
