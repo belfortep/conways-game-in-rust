@@ -7,7 +7,9 @@ use macroquad::{
 
 use super::{
     conways_game::ConwaysGame,
-    conways_game_constants::{CELLS_HEIGHT, CELLS_WIDTH, PADDING_X, PADDING_Y, VIEW_SCALE_FACTOR},
+    conways_game_constants::{
+        CELLS_HEIGHT, CELLS_WIDTH, FPS, PADDING_X, PADDING_Y, VIEW_SCALE_FACTOR,
+    },
     point::Point,
 };
 
@@ -15,6 +17,7 @@ pub struct ConwaysGameView {
     conways_game: ConwaysGame,
     is_passing_generations: bool,
     generations_count: u32,
+    fps: u32,
 }
 
 impl ConwaysGameView {
@@ -23,27 +26,35 @@ impl ConwaysGameView {
             conways_game,
             is_passing_generations: false,
             generations_count: 0,
+            fps: FPS,
         }
     }
 
     pub async fn start_drawing(&mut self) {
+        let mut timer = 0.0;
         loop {
             self.verify_input();
             self.verify_mouse_touch();
+            let constant_wait = 1.0 / self.fps as f32;
 
-            if self.is_passing_generations {
+            timer += get_frame_time();
+            if timer >= constant_wait && self.is_passing_generations {
                 self.next_generation();
+                timer = 0.0;
             }
+            clear_background(WHITE);
             self.draw();
-
             next_frame().await;
         }
     }
 
     fn draw(&mut self) {
-        clear_background(WHITE);
         draw_text(
-            format!("Generation number {}", self.generations_count).as_str(),
+            format!(
+                "Generation number {}, FPS {}",
+                self.generations_count, self.fps
+            )
+            .as_str(),
             10.0,
             30.0,
             20.0,
@@ -96,8 +107,18 @@ impl ConwaysGameView {
         if is_key_released(KeyCode::P) {
             self.is_passing_generations = !self.is_passing_generations;
         }
-        if is_key_released(KeyCode::Up) {
+        if is_key_released(KeyCode::Enter) {
             self.next_generation();
+        }
+
+        if is_key_released(KeyCode::Up) {
+            self.fps += 1;
+        }
+
+        if is_key_released(KeyCode::Down) {
+            if self.fps >= 2 {
+                self.fps -= 1;
+            }
         }
 
         if is_key_released(KeyCode::Escape) {
