@@ -31,16 +31,22 @@ impl ConwaysGame {
         self.alive_cells.contains(&cell)
     }
 
+    pub fn cells_do<F: FnMut(&Point)>(&self, mut closure: F) {
+        for cell in &self.alive_cells {
+            closure(cell);
+        }
+    }
+
     fn resurrected_cells(&self) -> HashSet<Point> {
         let mut cells = HashSet::new();
 
-        for cell in &self.alive_cells {
+        self.cells_do(|cell| {
             for neigbour in cell.neighbours() {
                 if self.can_resurrect(&neigbour) {
                     cells.insert(neigbour);
                 }
             }
-        }
+        });
 
         cells
     }
@@ -48,11 +54,12 @@ impl ConwaysGame {
     fn alive_cells(&self) -> HashSet<Point> {
         let mut cells = HashSet::new();
 
-        for cell in &self.alive_cells {
+        self.cells_do(|cell| {
             if self.can_survive(cell) {
                 cells.insert(*cell);
             }
-        }
+        });
+
         cells
     }
 
