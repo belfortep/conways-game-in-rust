@@ -1,6 +1,8 @@
 use conways::{
     conways::{conways_game::ConwaysGame, conways_game_view::ConwaysGameView},
-    parse_points_arguments, parse_random_arguments, receive_command_line_arguments,
+    parser::parser::{
+        parse_points_arguments, parse_random_arguments, receive_command_line_arguments,
+    },
 };
 
 #[macroquad::main("Conway's Game")]
