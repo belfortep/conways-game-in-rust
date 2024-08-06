@@ -54,10 +54,14 @@ impl ConwaysGameView {
             let width = CELLS_WIDTH;
             let height = CELLS_HEIGHT;
             let scale_factor = VIEW_SCALE_FACTOR;
-            let x_position =
-                Self::convert_x_position_from_conways_unit_to_pixels(cell.x_position, scale_factor);
-            let y_position =
-                Self::convert_y_position_from_conways_unit_to_pixels(cell.y_position, scale_factor);
+            let x_position = Self::convert_x_position_from_conways_unit_to_pixels(
+                cell.x_position as i32,
+                scale_factor,
+            );
+            let y_position = Self::convert_y_position_from_conways_unit_to_pixels(
+                cell.y_position as i32,
+                scale_factor,
+            );
             draw_rectangle(x_position, y_position, width, height, BLACK);
         });
     }

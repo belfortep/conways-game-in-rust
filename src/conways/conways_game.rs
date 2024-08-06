@@ -4,13 +4,27 @@ use super::point::Point;
 
 pub struct ConwaysGame {
     alive_cells: HashSet<Point>,
+    height: u32,
+    width: u32,
 }
 
 impl ConwaysGame {
-    pub fn new(alive_cells: Vec<Point>) -> Self {
-        Self {
-            alive_cells: HashSet::from_iter(alive_cells),
+    pub fn new(alive_cells: Vec<Point>, height: u32, width: u32) -> Result<Self, String> {
+        for cell in &alive_cells {
+            if !Self::cell_is_in_range(cell, height, width) {
+                return Err("A cell was not in the specified range".into());
+            }
         }
+
+        Ok(Self {
+            alive_cells: HashSet::from_iter(alive_cells),
+            height,
+            width,
+        })
+    }
+
+    fn cell_is_in_range(cell: &Point, height: u32, width: u32) -> bool {
+        cell.x_position < height as i32 && cell.y_position < width as i32
     }
 
     pub fn next_generation(&mut self) {
@@ -38,9 +52,15 @@ impl ConwaysGame {
     }
 
     pub fn add_cells(&mut self, cells_to_add: Vec<Point>) {
-        let cells_to_add = HashSet::from_iter(cells_to_add);
+        let mut cells = HashSet::new();
 
-        self.alive_cells = self.alive_cells.union(&cells_to_add).cloned().collect();
+        for cell in &cells_to_add {
+            if Self::cell_is_in_range(cell, self.height, self.width) {
+                cells.insert(*cell);
+            }
+        }
+
+        self.alive_cells = self.alive_cells.union(&cells).cloned().collect();
     }
 
     fn resurrected_cells(&self) -> HashSet<Point> {
@@ -92,7 +112,7 @@ mod test {
     #[test]
     fn test_001_a_cell_without_neighbours_die_after_one_generation() {
         let cells = vec![Point::new(0, 0)];
-        let mut conways_game = ConwaysGame::new(cells);
+        let mut conways_game = ConwaysGame::new(cells, 10, 10).unwrap();
 
         conways_game.next_generation();
 
@@ -101,8 +121,8 @@ mod test {
 
     #[test]
     fn test_002_a_cell_with_two_neighbours_is_alive_after_one_generation() {
-        let cells = vec![Point::new(0, 0), Point::new(0, 1), Point::new(0, -1)];
-        let mut conways_game = ConwaysGame::new(cells);
+        let cells = vec![Point::new(0, 0), Point::new(0, 1), Point::new(1, 0)];
+        let mut conways_game = ConwaysGame::new(cells, 10, 10).unwrap();
 
         conways_game.next_generation();
 
@@ -114,10 +134,10 @@ mod test {
         let cells = vec![
             Point::new(0, 0),
             Point::new(0, 1),
-            Point::new(-1, 0),
+            Point::new(1, 1),
             Point::new(1, 0),
         ];
-        let mut conways_game = ConwaysGame::new(cells);
+        let mut conways_game = ConwaysGame::new(cells, 10, 10).unwrap();
 
         conways_game.next_generation();
 
@@ -127,23 +147,23 @@ mod test {
     #[test]
     fn test_004_a_cell_with_more_than_three_neighbours_dies_after_one_generation() {
         let cells = vec![
-            Point::new(0, 0),
-            Point::new(0, 1),
-            Point::new(-1, 0),
-            Point::new(1, 0),
             Point::new(1, 1),
+            Point::new(0, 0),
+            Point::new(1, 0),
+            Point::new(0, 1),
+            Point::new(1, 2),
         ];
-        let mut conways_game = ConwaysGame::new(cells);
+        let mut conways_game = ConwaysGame::new(cells, 10, 10).unwrap();
 
         conways_game.next_generation();
 
-        assert!(!conways_game.is_alive(Point::new(0, 0)));
+        assert!(!conways_game.is_alive(Point::new(1, 1)));
     }
 
     #[test]
     fn test_005_a_dead_cell_with_exactly_three_neighbours_resurrects_after_one_generation() {
-        let cells = vec![Point::new(0, 1), Point::new(-1, 0), Point::new(1, 0)];
-        let mut conways_game = ConwaysGame::new(cells);
+        let cells = vec![Point::new(0, 1), Point::new(1, 1), Point::new(1, 0)];
+        let mut conways_game = ConwaysGame::new(cells, 10, 10).unwrap();
 
         conways_game.next_generation();
 
@@ -153,7 +173,7 @@ mod test {
     #[test]
     fn test_006_can_add_one_cell_after_a_generation_passed() {
         let cells = vec![Point::new(0, 0)];
-        let mut conways_game = ConwaysGame::new(cells);
+        let mut conways_game = ConwaysGame::new(cells, 10, 10).unwrap();
 
         conways_game.next_generation();
 
@@ -168,16 +188,34 @@ mod test {
     #[test]
     fn test_007_can_add_multiple_cells_after_a_generation_passed() {
         let cells = vec![Point::new(0, 0)];
-        let mut conways_game = ConwaysGame::new(cells);
+        let mut conways_game = ConwaysGame::new(cells, 10, 10).unwrap();
 
         conways_game.next_generation();
 
         assert!(!conways_game.is_alive(Point::new(0, 0)));
 
-        let cells = vec![Point::new(0, 0), Point::new(0, 1), Point::new(0, -1)];
+        let cells = vec![Point::new(0, 0), Point::new(0, 1), Point::new(1, 0)];
         conways_game.add_cells(cells);
         conways_game.next_generation();
 
         assert!(conways_game.is_alive(Point::new(0, 0)));
+    }
+
+    #[test]
+    fn test_008_can_not_have_cells_outside_bounds() {
+        let cells = vec![Point::new(20, 0)];
+        let conways_game = ConwaysGame::new(cells, 10, 10);
+
+        assert!(conways_game.is_err());
+    }
+
+    #[test]
+    fn test_009_can_not_add_cells_outside_bounds() {
+        let cells = vec![Point::new(0, 0)];
+        let mut conways_game = ConwaysGame::new(cells, 10, 10).unwrap();
+        let cells = vec![Point::new(1, 0), Point::new(50, 0)];
+        conways_game.add_cells(cells);
+        assert!(conways_game.is_alive(Point::new(1, 0)));
+        assert!(!conways_game.is_alive(Point::new(50, 0)));
     }
 }
