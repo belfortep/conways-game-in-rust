@@ -65,11 +65,11 @@ impl ConwaysGameView {
 
         self.conways_game.all_cells_do(|cell| {
             let x_position = Self::convert_x_position_from_conways_unit_to_pixels(
-                cell.x_position as i32,
+                cell.x_position,
                 VIEW_SCALE_FACTOR,
             ) + PADDING_X;
             let y_position = Self::convert_y_position_from_conways_unit_to_pixels(
-                cell.y_position as i32,
+                cell.y_position,
                 VIEW_SCALE_FACTOR,
             ) - PADDING_Y;
 
@@ -116,10 +116,8 @@ impl ConwaysGameView {
             self.fps += 1;
         }
 
-        if is_key_released(KeyCode::Down) {
-            if self.fps >= 2 {
-                self.fps -= 1;
-            }
+        if is_key_released(KeyCode::Down) && self.fps >= 2 {
+            self.fps -= 1;
         }
 
         if is_key_released(KeyCode::Escape) {

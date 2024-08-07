@@ -1,11 +1,11 @@
 use conways::{
+    command_line_parser::parser::{
+        parse_points_arguments, parse_random_arguments, receive_command_line_arguments,
+    },
     conways::{
         conways_game::ConwaysGame,
         conways_game_constants::{HEIGHT, WIDTH},
         conways_game_view::ConwaysGameView,
-    },
-    parser::parser::{
-        parse_points_arguments, parse_random_arguments, receive_command_line_arguments,
     },
 };
 
