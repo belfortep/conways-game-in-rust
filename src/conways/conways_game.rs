@@ -27,8 +27,8 @@ impl ConwaysGame {
     }
 
     fn cell_is_in_range(cell: &Point, height: u32, width: u32) -> bool {
-        (0 <= cell.x_position && cell.x_position <= width as i32)
-            && (0 <= cell.y_position && cell.y_position <= height as i32)
+        (0 <= cell.x_position && cell.x_position < width as i32)
+            && (0 <= cell.y_position && cell.y_position < height as i32)
     }
 
     pub fn next_generation(&mut self) {
