@@ -13,8 +13,8 @@ impl ConwaysGame {
         for cell in &alive_cells {
             if !Self::cell_is_in_range(cell, height, width) {
                 return Err(format!(
-                    "A cell was not in the specified range, width: {}, height: {}",
-                    width, height
+                    "A cell was not in the specified range, game width: {}, game height: {}, cell x: {}, cell y: {}",
+                    width, height, cell.x_position, cell.y_position
                 ));
             }
         }
@@ -51,7 +51,7 @@ impl ConwaysGame {
         self.alive_cells.contains(&cell)
     }
 
-    fn cells_do<F: FnMut(&Point)>(&self, mut closure: F) {
+    fn alive_cells_do<F: FnMut(&Point)>(&self, mut closure: F) {
         for cell in &self.alive_cells {
             closure(cell);
         }
@@ -80,7 +80,7 @@ impl ConwaysGame {
     fn resurrected_cells(&self) -> HashSet<Point> {
         let mut cells = HashSet::new();
 
-        self.cells_do(|cell| {
+        self.alive_cells_do(|cell| {
             for neigbour in cell.neighbours() {
                 if self.can_resurrect(&neigbour) {
                     cells.insert(neigbour);
@@ -94,7 +94,7 @@ impl ConwaysGame {
     fn alive_cells(&self) -> HashSet<Point> {
         let mut cells = HashSet::new();
 
-        self.cells_do(|cell| {
+        self.alive_cells_do(|cell| {
             if self.can_survive(cell) {
                 cells.insert(*cell);
             }
