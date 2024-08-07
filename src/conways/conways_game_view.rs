@@ -64,21 +64,19 @@ impl ConwaysGameView {
         draw_text("P to un/pause, Enter to pass one generation, Up key to increase speed, Down key to decrease speed, Escape to exit", 10.0, 50.0, 15.0, BLACK);
 
         self.conways_game.all_cells_do(|cell| {
-            let width = CELLS_WIDTH;
-            let height = CELLS_HEIGHT;
-            let scale_factor = VIEW_SCALE_FACTOR;
             let x_position = Self::convert_x_position_from_conways_unit_to_pixels(
                 cell.x_position as i32,
-                scale_factor,
+                VIEW_SCALE_FACTOR,
             ) + PADDING_X;
             let y_position = Self::convert_y_position_from_conways_unit_to_pixels(
                 cell.y_position as i32,
-                scale_factor,
+                VIEW_SCALE_FACTOR,
             ) - PADDING_Y;
+
             if self.conways_game.is_alive(*cell) {
-                draw_rectangle(x_position, y_position, width, height, BLACK);
+                draw_rectangle(x_position, y_position, CELLS_WIDTH, CELLS_HEIGHT, BLACK);
             } else {
-                draw_rectangle_lines(x_position, y_position, width, height, 2.0, GRAY);
+                draw_rectangle_lines(x_position, y_position, CELLS_WIDTH, CELLS_HEIGHT, 2.0, GRAY);
             }
         });
     }
