@@ -39,22 +39,22 @@ impl Point {
 }
 
 impl TryFrom<&str> for Point {
-    type Error = String;
-    fn try_from(s: &str) -> Result<Self, String> {
+    type Error = &'static str;
+    fn try_from(s: &str) -> Result<Self, &'static str> {
         let mut positions = s.split(',');
 
         let (Some(x_position), Some(y_position), None) =
             (positions.next(), positions.next(), positions.next())
         else {
-            return Err("Bad format creating a Point, should be x_position,y_position".into());
+            return Err("Bad format creating a Point, should be x_position,y_position");
         };
 
         let Ok(x_position) = x_position.parse() else {
-            return Err("The x_position should be an integer".into());
+            return Err("The x_position should be an integer");
         };
 
         let Ok(y_position) = y_position.parse() else {
-            return Err("The y_position should be an integer".into());
+            return Err("The y_position should be an integer");
         };
 
         Ok(Self {
