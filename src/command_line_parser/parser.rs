@@ -1,4 +1,4 @@
-use clap::{Arg, ArgMatches, Command};
+use clap::{arg, ArgGroup, ArgMatches, Command};
 
 use crate::conways::point::Point;
 
@@ -19,26 +19,15 @@ pub fn parse_points_arguments(args: String) -> Result<Vec<Point>, String> {
 
 pub fn receive_command_line_arguments() -> Result<ArgMatches, String> {
     let args = Command::new(" Conway's game of life")
-        .arg(
-            Arg::new("p")
-                .short('p')
-                .long("points")
-                .value_name("Points")
-                .help("Specify the points in the format 0,0:1,0:1,1:...."),
-        )
-        .arg(
-            Arg::new("r")
-                .short('r')
-                .long("Random")
-                .value_name("Random")
-                .help("Specify the range in the format max_value,min_value,ammout_of_points"),
+        .arg(arg!(-p --points "points").required(false))
+        .arg(arg!(-r --random <RANGE> "random points").required(false))
+        .group(
+            ArgGroup::new("initial state")
+                .args(["points", "random"])
+                .required(false),
         )
         .after_help("Don't use -r and -p at the same time")
         .get_matches();
-
-    if args.contains_id("p") && args.contains_id("r") {
-        return Err("Don't use -r and -p at the same time".into());
-    }
 
     Ok(args)
 }
@@ -88,35 +77,35 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_001_can_create_correct_ammount_of_random_points() {
+    fn can_create_correct_ammount_of_random_points() {
         let random_points = parse_random_arguments("100,0,5".into()).unwrap();
 
         assert_eq!(random_points.len(), 5);
     }
 
     #[test]
-    fn test_002_can_not_create_points_with_missing_arguments() {
+    fn can_not_create_points_with_missing_arguments() {
         let random_points = parse_random_arguments("100,5".into());
 
         assert!(random_points.is_err());
     }
 
     #[test]
-    fn test_003_can_not_create_points_with_wrong_type_of_arguments() {
+    fn can_not_create_points_with_wrong_type_of_arguments() {
         let random_points = parse_random_arguments("hi,100,5".into());
 
         assert!(random_points.is_err());
     }
 
     #[test]
-    fn test_004_can_not_create_points_with_min_value_bigger_than_max_value() {
+    fn can_not_create_points_with_min_value_bigger_than_max_value() {
         let random_points = parse_random_arguments("10,100,5".into());
 
         assert!(random_points.is_err());
     }
 
     #[test]
-    fn test_005_can_not_create_points_with_negative_ammout_of_points() {
+    fn can_not_create_points_with_negative_ammout_of_points() {
         let random_points = parse_random_arguments("10,100,-1".into());
 
         assert!(random_points.is_err());

@@ -1,3 +1,5 @@
+use std::io::stdin;
+
 use conways::{
     command_line_parser::parser::{
         parse_points_arguments, parse_random_arguments, receive_command_line_arguments,
@@ -15,11 +17,16 @@ async fn main() -> Result<(), String> {
 
     let mut cells = Vec::new();
 
-    if let Some(points) = args.get_one::<String>("p") {
-        cells = parse_points_arguments(points.clone())?;
+    if args.get_flag("points") {
+        let mut points_input = String::new();
+        let stdin = stdin();
+        stdin
+            .read_line(&mut points_input)
+            .map_err(|error| error.to_string())?;
+        cells = parse_points_arguments(points_input.trim().to_string())?;
     }
 
-    if let Some(random) = args.get_one::<String>("r") {
+    if let Some(random) = args.get_one::<String>("random") {
         cells = parse_random_arguments(random.clone())?;
     }
 

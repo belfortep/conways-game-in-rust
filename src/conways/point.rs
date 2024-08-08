@@ -39,23 +39,23 @@ impl Point {
 }
 
 impl TryFrom<&str> for Point {
-    type Error = String;
-    fn try_from(s: &str) -> Result<Self, String> {
+    type Error = &'static str;
+    fn try_from(s: &str) -> Result<Self, &'static str> {
         let mut positions = s.split(',');
 
         let (Some(x_position), Some(y_position), None) =
             (positions.next(), positions.next(), positions.next())
         else {
-            return Err("Bad format creating a Point, should be x_position,y_position".into());
+            return Err("Bad format creating a Point, should be x_position,y_position");
         };
 
-        let Ok(x_position) = x_position.parse() else {
-            return Err("The x_position should be an integer".into());
-        };
+        let x_position = x_position
+            .parse()
+            .map_err(|_| "The x_position should be an integer")?;
 
-        let Ok(y_position) = y_position.parse() else {
-            return Err("The y_position should be an integer".into());
-        };
+        let y_position = y_position
+            .parse()
+            .map_err(|_| "The y_position should be an integer")?;
 
         Ok(Self {
             x_position,
@@ -70,7 +70,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_001_can_create_a_point_from_string() {
+    fn can_create_a_point_from_string() {
         let point = Point::try_from("5,5").unwrap();
 
         assert_eq!(point.x_position, 5);
@@ -78,15 +78,36 @@ mod test {
     }
 
     #[test]
-    fn test_002_can_not_create_point_from_missing_position() {
+    fn can_not_create_point_from_missing_position() {
         let point = Point::try_from("5");
 
         assert!(point.is_err())
     }
 
     #[test]
-    fn test_003_can_not_create_point_from_wrong_type() {
+    fn can_not_create_point_from_wrong_type_in_x_position() {
         let point = Point::try_from("hi,5");
+
+        assert!(point.is_err())
+    }
+
+    #[test]
+    fn can_not_create_point_from_wrong_type_in_y_position() {
+        let point = Point::try_from("5,hi");
+
+        assert!(point.is_err())
+    }
+
+    #[test]
+    fn can_not_create_point_with_extra_arguments() {
+        let point = Point::try_from("5,5,5");
+
+        assert!(point.is_err());
+    }
+
+    #[test]
+    fn can_not_create_point_with_float_arguments() {
+        let point = Point::try_from("5.0,5.4");
 
         assert!(point.is_err())
     }
