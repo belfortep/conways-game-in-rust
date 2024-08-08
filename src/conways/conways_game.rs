@@ -32,10 +32,17 @@ impl ConwaysGame {
     }
 
     pub fn next_generation(&mut self) {
-        let alive_cells = self.alive_cells();
-        let resurrected_cells = self.resurrected_cells();
+        let mut cells = HashSet::new();
 
-        self.alive_cells = alive_cells.union(&resurrected_cells).cloned().collect();
+        self.all_cells_do(|cell| {
+            if self.can_resurrect(cell) {
+                cells.insert(*cell);
+            }
+            if self.can_survive(cell) && self.alive_cells.contains(cell) {
+                cells.insert(*cell);
+            }
+        });
+        self.alive_cells = cells;
     }
 
     pub fn is_alive(&self, cell: Point) -> bool {
@@ -56,29 +63,6 @@ impl ConwaysGame {
                 self.alive_cells.insert(*cell);
             }
         }
-    }
-
-    fn alive_cells(&self) -> HashSet<Point> {
-        let mut cells = HashSet::new();
-
-        for cell in &self.alive_cells {
-            if self.can_survive(cell) {
-                cells.insert(*cell);
-            }
-        }
-        cells
-    }
-
-    fn resurrected_cells(&self) -> HashSet<Point> {
-        let mut cells = HashSet::new();
-
-        self.all_cells_do(|cell| {
-            if self.can_resurrect(cell) {
-                cells.insert(*cell);
-            }
-        });
-
-        cells
     }
 
     fn can_resurrect(&self, cell: &Point) -> bool {
