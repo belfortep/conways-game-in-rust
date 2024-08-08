@@ -108,7 +108,7 @@ impl ConwaysGameView {
         if is_key_released(KeyCode::P) {
             self.is_passing_generations = !self.is_passing_generations;
         }
-        if is_key_released(KeyCode::Enter) {
+        if is_key_released(KeyCode::Enter) && !self.is_passing_generations {
             self.next_generation();
         }
 
