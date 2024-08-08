@@ -49,13 +49,13 @@ impl TryFrom<&str> for Point {
             return Err("Bad format creating a Point, should be x_position,y_position");
         };
 
-        let Ok(x_position) = x_position.parse() else {
-            return Err("The x_position should be an integer");
-        };
+        let x_position = x_position
+            .parse()
+            .map_err(|_| "The x_position should be an integer")?;
 
-        let Ok(y_position) = y_position.parse() else {
-            return Err("The y_position should be an integer");
-        };
+        let y_position = y_position
+            .parse()
+            .map_err(|_| "The y_position should be an integer")?;
 
         Ok(Self {
             x_position,
