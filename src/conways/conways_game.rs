@@ -32,29 +32,11 @@ impl ConwaysGame {
     }
 
     pub fn next_generation(&mut self) {
-        let alive_cells = self.alive_cells();
-
-        let resurrected_cells = self.resurrected_cells();
-
-        let mut cells = HashSet::new();
-
-        for cell in alive_cells.union(&resurrected_cells) {
-            if Self::cell_is_in_range(cell, self.height, self.width) {
-                cells.insert(*cell);
-            }
-        }
-
-        self.alive_cells = cells;
+        self.alive_cells = self.alive_cells();
     }
 
     pub fn is_alive(&self, cell: Point) -> bool {
         self.alive_cells.contains(&cell)
-    }
-
-    fn alive_cells_do<F: FnMut(&Point)>(&self, mut closure: F) {
-        for cell in &self.alive_cells {
-            closure(cell);
-        }
     }
 
     pub fn all_cells_do<F: FnMut(&Point)>(&self, mut closure: F) {
@@ -66,36 +48,18 @@ impl ConwaysGame {
     }
 
     pub fn add_cells(&mut self, cells_to_add: Vec<Point>) {
-        let mut cells = HashSet::new();
-
         for cell in &cells_to_add {
             if Self::cell_is_in_range(cell, self.height, self.width) {
-                cells.insert(*cell);
+                self.alive_cells.insert(*cell);
             }
         }
-
-        self.alive_cells = self.alive_cells.union(&cells).cloned().collect();
-    }
-
-    fn resurrected_cells(&self) -> HashSet<Point> {
-        let mut cells = HashSet::new();
-
-        self.alive_cells_do(|cell| {
-            for neigbour in cell.neighbours() {
-                if self.can_resurrect(&neigbour) {
-                    cells.insert(neigbour);
-                }
-            }
-        });
-
-        cells
     }
 
     fn alive_cells(&self) -> HashSet<Point> {
         let mut cells = HashSet::new();
 
-        self.alive_cells_do(|cell| {
-            if self.can_survive(cell) {
+        self.all_cells_do(|cell| {
+            if self.can_resurrect(cell) || self.can_survive(cell) {
                 cells.insert(*cell);
             }
         });
