@@ -85,8 +85,29 @@ mod test {
     }
 
     #[test]
-    fn can_not_create_point_from_wrong_type() {
+    fn can_not_create_point_from_wrong_type_in_x_position() {
         let point = Point::try_from("hi,5");
+
+        assert!(point.is_err())
+    }
+
+    #[test]
+    fn can_not_create_point_from_wrong_type_in_y_position() {
+        let point = Point::try_from("5,hi");
+
+        assert!(point.is_err())
+    }
+
+    #[test]
+    fn can_not_create_point_with_extra_arguments() {
+        let point = Point::try_from("5,5,5");
+
+        assert!(point.is_err());
+    }
+
+    #[test]
+    fn can_not_create_point_with_float_arguments() {
+        let point = Point::try_from("5.0,5.4");
 
         assert!(point.is_err())
     }
