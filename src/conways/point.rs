@@ -70,7 +70,7 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_001_can_create_a_point_from_string() {
+    fn can_create_a_point_from_string() {
         let point = Point::try_from("5,5").unwrap();
 
         assert_eq!(point.x_position, 5);
@@ -78,14 +78,14 @@ mod test {
     }
 
     #[test]
-    fn test_002_can_not_create_point_from_missing_position() {
+    fn can_not_create_point_from_missing_position() {
         let point = Point::try_from("5");
 
         assert!(point.is_err())
     }
 
     #[test]
-    fn test_003_can_not_create_point_from_wrong_type() {
+    fn can_not_create_point_from_wrong_type() {
         let point = Point::try_from("hi,5");
 
         assert!(point.is_err())

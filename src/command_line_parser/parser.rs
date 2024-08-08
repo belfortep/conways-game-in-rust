@@ -88,35 +88,35 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_001_can_create_correct_ammount_of_random_points() {
+    fn can_create_correct_ammount_of_random_points() {
         let random_points = parse_random_arguments("100,0,5".into()).unwrap();
 
         assert_eq!(random_points.len(), 5);
     }
 
     #[test]
-    fn test_002_can_not_create_points_with_missing_arguments() {
+    fn can_not_create_points_with_missing_arguments() {
         let random_points = parse_random_arguments("100,5".into());
 
         assert!(random_points.is_err());
     }
 
     #[test]
-    fn test_003_can_not_create_points_with_wrong_type_of_arguments() {
+    fn can_not_create_points_with_wrong_type_of_arguments() {
         let random_points = parse_random_arguments("hi,100,5".into());
 
         assert!(random_points.is_err());
     }
 
     #[test]
-    fn test_004_can_not_create_points_with_min_value_bigger_than_max_value() {
+    fn can_not_create_points_with_min_value_bigger_than_max_value() {
         let random_points = parse_random_arguments("10,100,5".into());
 
         assert!(random_points.is_err());
     }
 
     #[test]
-    fn test_005_can_not_create_points_with_negative_ammout_of_points() {
+    fn can_not_create_points_with_negative_ammout_of_points() {
         let random_points = parse_random_arguments("10,100,-1".into());
 
         assert!(random_points.is_err());
