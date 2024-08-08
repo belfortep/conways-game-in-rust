@@ -35,10 +35,7 @@ impl ConwaysGame {
         let mut cells = HashSet::new();
 
         self.all_cells_do(|cell| {
-            if self.can_resurrect(cell) {
-                cells.insert(*cell);
-            }
-            if self.can_survive(cell) {
+            if self.can_resurrect(cell) || self.can_survive(cell) {
                 cells.insert(*cell);
             }
         });
