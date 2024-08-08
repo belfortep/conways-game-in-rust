@@ -38,7 +38,7 @@ impl ConwaysGame {
             if self.can_resurrect(cell) {
                 cells.insert(*cell);
             }
-            if self.can_survive(cell) && self.alive_cells.contains(cell) {
+            if self.can_survive(cell) {
                 cells.insert(*cell);
             }
         });
@@ -74,7 +74,8 @@ impl ConwaysGame {
     fn can_survive(&self, cell: &Point) -> bool {
         let ammount_of_neighbours = cell.neighbours().intersection(&self.alive_cells).count();
 
-        ammount_of_neighbours == 2 || ammount_of_neighbours == 3
+        (ammount_of_neighbours == 2 || ammount_of_neighbours == 3)
+            && self.alive_cells.contains(cell)
     }
 }
 

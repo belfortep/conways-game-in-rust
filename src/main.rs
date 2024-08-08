@@ -13,13 +13,12 @@ use conways::{
 
 #[macroquad::main("Conway's Game")]
 async fn main() -> Result<(), String> {
-    let mut points_input = String::new();
-
     let args = receive_command_line_arguments()?;
 
     let mut cells = Vec::new();
 
     if args.get_flag("points") {
+        let mut points_input = String::new();
         let stdin = stdin();
         stdin
             .read_line(&mut points_input)
